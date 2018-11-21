@@ -2,6 +2,18 @@ const five = require("johnny-five");
 const firmata = require("firmata").Board;
 const EtherPortClient = require("etherport-client").EtherPortClient;
 
+const netList = require('network-list');
+
+const devicePort = 3030
+var aliveDevices
+var ios = []
+var ESPs = null
+const netConf = {
+  ip:'192.168.137',
+  macs: ['5c:cf:7f:c1:7b:ab']
+}
+
+
 const boardHandler = function(){
   console.log('board ready');
   
@@ -13,24 +25,42 @@ const boardHandler = function(){
     }
   })
 
-  this.on('exit', function(){       console.log('exit')});
-  this.on('close', function(){      console.log('close')});
-  this.on('disconnect', function(){ console.log('disconnect')});
+  this.on('exit', function(){
+    rgb.off();
+    console.log('exit')
+  });
 
   rgb.color("#ff00ff");
-//  rgb.red.blink(250);
-//  rgb.green.blink(1000);
-//  rgb.blue.blink(500);
 }
 
-const ESP = new five.Board({
-  io: new firmata(new EtherPortClient({
-    host: '192.168.137.70',
-    port: 3030
-    // mac: "5c:cf:7f:c1:7b:ab"
-  }))
+
+netList.scan({ip:netConf.ip}, (err, arr) => {
+  aliveDevices = arr.filter((device) =>{
+      return device.alive && netConf.macs.includes(device.mac)
+  })
+  console.log(aliveDevices)
+  
+
+  // {
+  //   io: new firmata(new EtherPortClient({
+  //     host: '192.168.137.94',
+  //     port: 3030,
+  //     mac: "5c:cf:7f:c1:7b:ab"
+  //   }))
+  // }
+
+  aliveDevices.forEach(device => {
+    
+    ios.push({
+      io: new firmata(new EtherPortClient({
+        host: device.ip,
+        port: devicePort,
+        mac: device.mac
+      }))
+    })
+  });
+  ESPs = new five.Boards(ios)
+  ESPs(ios).on("ready", boardHandler)
 })
 
 
-
-ESP.on("ready", boardHandler)
