@@ -18,7 +18,7 @@ The intent of this project was make a workable base code to control a set of ESP
 ## Results
 |   |   |
 |---|---|
-| After these configuration just run the main.js file with your **node** our througth **npm start** the board used to test code was a **ESP-12F MINI nodemcu**. After a little while of scan all blue leds should turn on and stay like these until the code as closed| Nodemcu MINI![](./ESP.png "ESP-12F MINI nodemcu") |
+| After these configuration just run the main.js file with your **node** our througth **npm start** the board used to test code was a **ESP-12F MINI nodemcu**. After a little while of scan all blue leds should turn on and stay like these until the code as closed|![](./ESP.PNG "ESP-12F MINI nodemcu") Nodemcu MINI |
 
 
 
